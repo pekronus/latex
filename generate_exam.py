@@ -68,6 +68,28 @@ def eqn_true(x, y, dv = True):
     a.append(incorr)
     shuffle_answers(f, qs, a)
 
+#------------------------------
+def mult1(m, n, swhat):
+    qs = "There are %d students who brough %d %s to class. Which expression can be used to find the total number of toys that were brought to the play date?" % (m,n, swhat)
+    a = [];
+    corr = "$%d \\times %d$" % (m, n)
+    a.append(corr)
+    a.append("$%d + %d$" % (m,n) )
+    a.append("$%d \\times %d$" % (m,m))
+    a.append("$%d \\times %d$" % (n,n))
+    shuffle_answers(f, qs, a)
+
+#------------------------------
+def cover1(n, side):
+    qs = "A rectangle can be covered completely by %d square pieces of paper without gaps or overlaps. If each piece of paper has the side length of %d feet, what is the total area of the rectangle?" % (n,side)
+    a = [];
+    corr = side*side*n
+    a.append(corr)
+    a.append(n*n*side)
+    a.append(n*side)
+    a.append(n)
+    shuffle_answers(f, qs, a)
+    
 ## Main---------------------------
 if len(sys.argv) <= 1:
     print("Need a file name");
@@ -80,8 +102,13 @@ f = open(sys.argv[1], "w")
 start(f)
 expr1_mult(f, 8, 8, 4)
 
-roundq(578, "The distance between two cities", "miles", 2)
+roundq(274, "The distance between two cities", "miles", 2)
 
 eqn_true(6, 4, dv=True)
+
+mult1(7, 3, "toy cars")
+
+cover1(12, 2)
+
 end(f)
 f.close()
