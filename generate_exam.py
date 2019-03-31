@@ -2,8 +2,18 @@ import sys
 import numpy as np
 import io
 
-gnames = ["John", "Sally", "Esther", "Juan", "Daniel", "Monica", "Julia", "Brian", "Jessica", "Adam", "Michael"]
+boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
+girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
+gnames = list(boys_names.union(girl_names))
 
+def get_names(n):
+    rr = np.arange(len(gnames))
+    np.random.shuffle(rr)
+    ret = []
+    for i in np.arange(n):
+        ret.append(gnames[rr[i]])
+    return ret
+        
 class BasicTime:
     """A class for basic hour minute manipulations. Does not under satmd days """
     mins = 0 # 0-59
@@ -121,6 +131,16 @@ def expr1_mult(f, x, y, d):
     a.append("$(%d \\times %d) + %d  $" % (x, y,  x/d))
     a.append("$(%d \\times %d) \\times %d  $" % (x/d, d, y)) # correct
     print_answers(f, qs, a)
+
+def mult_basic(something, n, name_of_container, m, name_of_object, end_q):
+    qs = "A %s has %d %s that each can hold %d %s. What is the total number of %s %s?" % (something, n, name_of_container, m, name_of_object, name_of_object, end_q)
+    a = []
+    adds = np.random.choice(np.arange(-10, 10), 2, replace = False)
+    a.append(str(m*n))
+    a.append(str(m+n))
+    a.append(str(m*n + adds[0]))
+    a.append(str(m*n + adds[1]))
+    print_answers(f, qs, a)
     
 #------------------------------
 def roundq(val, qstart, unit, d):
@@ -236,7 +256,45 @@ def which_nl(num, denom, ndivs, scale_fact = 8):
 
     print_answers(f, qs, a)
     
+#------------------------------
+def last_and_this_week(n1,d1,n2,d2):
+    name = get_names(1)[0]
+    pronoun = "he" if name in boys_names else "she"
+    qs = "Last week %s ate %d chocolates a day for %d days.  This week, %s ate %d chocolates a day for %d days. Which expression can be used to represent the total number of chocolates %s ate in the last two weeks?\n" % (name, n1, d1, pronoun, n2, d2, name)
+    a = [];
+    corr = "$%d \\times %d + %d \\times %d$" % (n1,d1,n2,d2)
+    a.append(corr)
+    a.append("$(%d + %d) \\times (%d + %d)$" % (n1,d1,n2,d2))
+    a.append("$%d \\times %d \\times %d \\times %d$" % (n1,d1,n2,d2))
+    a.append("$%d + %d + %d + %d$" % (n1,d1,n2,d2))
+    print_answers(f, qs, a)
 
+def small_and_big(num, den, total):
+    name = get_names(1)[0]
+    pronoun = "He" if name in boys_names else "She"
+    pronoun2="his" if name in boys_names else "her"
+    plural = "s" if total > 1 else ""
+    qs = "%s has a cup that holds exactly $\\frac{%d}{%d}$ liters of water. %s has a bottle that holds %d liter%s of water. How many times does %s need to pour %s cup into the bottle to fill it completely?" % (name, num, den, pronoun, total, plural, pronoun.lower(), pronoun2)
+    a = []
+    add = np.random.choice(np.arange(1, 4), 1, replace = False)
+    a.append(str(int((total*den)/num)))
+    a.append(str(1))
+    a.append("$\\fracs{%d}{%d}$" % (num, den))
+    a.append(str(int((total*den)/num + add[0])))
+    print_answers(f, qs, a)
+
+def frac_comparison(n1, d1, n2, d2):
+    names = get_names(2)
+    pronoun1 = "his" if names[0] in boys_names else "her"
+    pronoun2 = "his" if names[1] in boys_names else "her"
+    qs = "%s and %s got identical pizzas. %s ate $\\frac{%d}{%d}$ of %s pizza, while %s  ate $\\frac{%d}{%d}$ of %s pizza. Which statement shows a correct comparisons of the portions of pizza that % and %s ate?" % (names[0], names[1], names[0], n1, d1, pronoun1, names[1], n2, d2, pronoun2, names[0], names[1])
+    a = []
+    a.append("$\\frac{%d}{%d} = \\frac{%d}{%d}$" % (n1,d1,n2,d2))
+    a.append("$\\frac{%d}{%d} < \\frac{%d}{%d}$" % (n1,d1,n2,d2))
+    a.append("$\\frac{%d}{%d} > \\frac{%d}{%d}$" % (n1,d1,n2,d2))
+    a.append("$\\frac{%d}{%d} + \\frac{%d}{%d}$" % (n1,d1,n2,d2))
+    print_answers(f, qs, a)
+    
 ## Main---------------------------
 if len(sys.argv) <= 1:
     print("Need a file name");
@@ -267,5 +325,14 @@ dist1(1, ["Home", "Grandparents", "candy", "store"], ndivs=8, loc_pos=6, dist_to
 #print(ss.getvalue())
 which_nl(1, 4, ndivs=8, scale_fact = 8)
 which_nl(2, 3, ndivs=6, scale_fact = 8)
+
+last_and_this_week(4, 3, 5, 2)
+
+mult_basic("shopping center", 5, "floors", 25, "stores", end_q="")
+
+small_and_big(1, 3, 2)
+
+frac_comparison(1, 6, 2, 12)
+
 end(f)
 f.close()
