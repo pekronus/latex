@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import io
 
 gnames = ["John", "Sally", "Esther", "Juan", "Daniel", "Monica", "Julia", "Brian", "Jessica", "Adam", "Michael"]
 
@@ -66,11 +67,15 @@ class NumberLine:
         f.write("\\draw (0,0)  node [align=center, below]{%s} node[align=center, above, yshift=0.1cm]{0};\n" % self.start_label)
         f.write("\\draw (%5.2f,0) node [align=center, below]{%s} node[align=center, above, yshift=0.1cm]{%d};\n" % (self.tlen*self.scale_fact, self.end_label, self.tlen))
             
-    def draw(self, f):
+    def draw(self, f, custom_labels={}):
         f.write("\\begin{tikzpicture}\n")
         f.write("\\draw (0,0) -- (%5.2f,0);\n" % (self.tlen*self.scale_fact))
         self.draw_ticks(f)
-        self.draw_labels(f)
+        if len(custom_labels) == 0:
+            self.draw_labels(f)
+        else:
+            for pos, lbl in custom_labels.items():
+                f.write(self.draw_label(pos, 0.01, lbl)+"\n")
         self.draw_start_end_labels(f)
         f.write("\\end{tikzpicture}\n")
 
@@ -183,10 +188,8 @@ def time1(hh, mm, diff):
 def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     # create random points
     pts = np.arange(ndivs)
-    
     pts = np.delete(pts, [0, loc_pos])
     locs = np.random.choice(pts, 3, replace=False)
-    print(locs, loc_pos)
     locs = np.append(locs, loc_pos)
     # pick a name
     rr = np.arange(len(gnames))
@@ -194,7 +197,7 @@ def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     n1 = gnames[rr[0]]
     
     distance_str = "mile" if tlen == 1 else "miles"
-    f.write("\\begin{question}\n")
+    f.write("\\question\n")
     f.write("The distance between %s's %s and her %s is exactly %d %s as shown on the number line below " % (n1, label_names[0].lower(), label_names[1].lower(), tlen, distance_str))
     f.write("\\vspace{0.1in}\n")
     f.write("\\begin{center}\n")
@@ -209,7 +212,30 @@ def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     for a in ['A', 'B', 'C', 'D']:
         f.write("\\choice %s\n" % a)
     f.write("\\end{choices}\n")
-    f.write("\\end{question}\n")
+
+
+def which_nl(num, denom, ndivs, scale_fact = 8):
+    corr_pos = num*ndivs/denom
+    # create random points
+    pts = np.arange(ndivs)
+    pts = np.delete(pts, [0, int(corr_pos)])
+    locs = np.random.choice(pts, 3, replace=False)
+    locs = np.append(locs, corr_pos)
+    
+    lbl = "$\\frac{%s}{%s}$" % (num, denom)
+    qs = "Which number line shows the fraction %s correctly?" % (lbl)
+
+    a = [];
+    nl = NumberLine(1, "", "", [], ndivs, scale_fact)
+    for l in locs:
+        custom_labels = {float(l)/ndivs : lbl}
+        ss = io.StringIO()
+        nl.draw(ss, custom_labels)
+        a.append(ss.getvalue())
+        ss.close()
+
+    print_answers(f, qs, a)
+    
 
 ## Main---------------------------
 if len(sys.argv) <= 1:
@@ -236,7 +262,10 @@ time1(14, 2,-7)
 dist1(1, ["Home", "School", "ice cream", "store"], ndivs=8, loc_pos=3, dist_to_0 = True, scale_fact=4)
 dist1(1, ["Home", "Grandparents", "candy", "store"], ndivs=8, loc_pos=6, dist_to_0 = False, scale_fact=4)
 #nl = NumberLine(1, "Home", "School", [1/8.0, 3/8.0, 5/8.0, 7/8.0], 8, scale_fact=4)
-#nl.draw(f)
-
+#ss = io.StringIO()
+#nl.draw(ss)
+#print(ss.getvalue())
+which_nl(1, 4, ndivs=8, scale_fact = 8)
+which_nl(2, 3, ndivs=6, scale_fact = 8)
 end(f)
 f.close()
