@@ -13,7 +13,8 @@ def get_names(n):
     for i in np.arange(n):
         ret.append(gnames[rr[i]])
     return ret
-        
+
+
 class BasicTime:
     """A class for basic hour minute manipulations. Does not under satmd days """
     mins = 0 # 0-59
@@ -276,7 +277,7 @@ def small_and_big(num, den, total):
     plural = "s" if total > 1 else ""
     qs = "%s has a cup that holds exactly $\\frac{%d}{%d}$ liters of water. %s has a bottle that holds %d liter%s of water. How many times does %s need to pour %s cup into the bottle to fill it completely?" % (name, num, den, pronoun, total, plural, pronoun.lower(), pronoun2)
     a = []
-    add = np.random.choice(np.arange(1, 4), 1, replace = False)
+    add = np.random.choice(np.arange(1, 4), 1)
     a.append(str(int((total*den)/num)))
     a.append(str(1))
     a.append("$\\fracs{%d}{%d}$" % (num, den))
@@ -293,6 +294,42 @@ def frac_comparison(n1, d1, n2, d2):
     a.append("$\\frac{%d}{%d} < \\frac{%d}{%d}$" % (n1,d1,n2,d2))
     a.append("$\\frac{%d}{%d} > \\frac{%d}{%d}$" % (n1,d1,n2,d2))
     a.append("$\\frac{%d}{%d} + \\frac{%d}{%d}$" % (n1,d1,n2,d2))
+    print_answers(f, qs, a)
+
+def what_situation(n1, n2, op = '/'):
+    sop = op
+    if op == "/":
+        sop = "\\div"
+    elif op == "*":
+        sop = "\\times"
+
+    name = get_names(1)[0]
+    pronoun ="his" if name in boys_names else "her"
+    
+    qs = "What situation can be solved by using the expression $%d %s %d$?" % (n1, sop, n2)
+    a = []
+    a.append("Finding the total number of cars where there are %d groups of %d cars" % (n1, n2))
+    a.append("Finding the number of candies when there is a group of %d candies and a group of %d candies" % (n1, n2))
+    a.append("Finding the number of boys in a class when there is a total of %d students and %d of them are girls" % (n1, n2))
+    a.append("Finding the number of hours it takes for %s to bike to school if %s school is %d miles away and %s's speed on his bike is %d miles per hour" % (name, pronoun, n1, name, n2))
+    print_answers(f, qs, a)
+    
+#------------------------------
+def pattern(start, add):
+    p = np.arange(6)*add + start
+    pstr = ""
+    for n in p:
+        pstr += str(n) + ","
+    qs = """A number pattern is shown below:
+
+%s
+
+Which rule could have been used to make the pattern?""" % pstr[:-1]
+    a = []
+    a.append("Start with %d. Add %d each time to get the next number." % (start, add)) # correct
+    a.append("Start with %d. Add %d each time to get the next number." % (start+1, add-1)) # correct
+    a.append("Start with %d. Add %d each time to get the next number." % (start, add+1)) # correct
+    a.append("Start with %d. Add %d each time to get the next number." % (0, add)) # correct
     print_answers(f, qs, a)
     
 ## Main---------------------------
@@ -333,6 +370,12 @@ mult_basic("shopping center", 5, "floors", 25, "stores", end_q="")
 small_and_big(1, 3, 2)
 
 frac_comparison(1, 6, 2, 12)
+
+what_situation(18, 9, "/")
+
+pattern(3, 4)
+
+what_situation(6, 5, "*")
 
 end(f)
 f.close()
