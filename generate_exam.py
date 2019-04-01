@@ -365,11 +365,17 @@ which_nl(2, 3, ndivs=6, scale_fact = 8)
 
 last_and_this_week(4, 3, 5, 2)
 
+time1(14, 58, 5)
+
+roundq(849, "The cost of an iPhone X", "dollars", 2)
+
+pattern(6, 3)
+
 mult_basic("shopping center", 5, "floors", 25, "stores", end_q="")
 
 small_and_big(1, 3, 2)
 
-frac_comparison(1, 6, 2, 12)
+frac_comparison(2, 6, 2, 5)
 
 what_situation(18, 9, "/")
 
