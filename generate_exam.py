@@ -6,6 +6,32 @@ boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
 girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
 gnames = list(boys_names.union(girl_names))
 
+def print_show_work(vspace):
+    show_work_str = """
+Show your work.
+\\vskip %din
+\\begin{tikzpicture}
+\\draw (5,0) -- (10,0);
+\\draw (5,0) node[align=center, left]{Answer:}
+\\end{tikzpicture}
+""" % vspace
+    f.write(show_work_str)
+
+#--------------------
+def concat_items(item_list):
+    mnames_cc = ""
+    if (not item_list):
+        return ""
+    
+    fst = True
+    for n in item_list:
+        if (not fst):
+            mnames_cc += "and "
+        fst = False
+        mnames_cc += n.lower() + " "
+    return mnames_cc[:-1]
+
+
 def get_names(n):
     rr = np.arange(len(gnames))
     np.random.shuffle(rr)
@@ -96,6 +122,7 @@ def start(f):
     f.write("\\newcommand{\\qm}{\\underline{\\hspace{0.3cm}?\hspace{0.3cm}}}\n");
     f.write("\\usepackage{tikz}\n")
     f.write("\\usepackage{amsmath}\n")
+    f.write("\\usepackage{pgfplots}\n")
     f.write("\\begin{document}\n")
     f.write("""\\begin{center}
 	\\fbox{\\fbox{\\parbox{5.5in}{\centering
@@ -280,7 +307,7 @@ def small_and_big(num, den, total):
     add = np.random.choice(np.arange(1, 4), 1)
     a.append(str(int((total*den)/num)))
     a.append(str(1))
-    a.append("$\\fracs{%d}{%d}$" % (num, den))
+    a.append("$\\frac{%d}{%d}$" % (num, den))
     a.append(str(int((total*den)/num + add[0])))
     print_answers(f, qs, a)
 
@@ -331,6 +358,63 @@ Which rule could have been used to make the pattern?""" % pstr[:-1]
     a.append("Start with %d. Add %d each time to get the next number." % (start, add+1)) # correct
     a.append("Start with %d. Add %d each time to get the next number." % (0, add)) # correct
     print_answers(f, qs, a)
+
+
+#--------------------
+def draw_bar_chart(categories, x_label, y_label):
+
+    symb_str = ""
+    plot_data_str =""
+    for key, val in categories.items():
+        symb_str += key + ","
+        plot_data_str += "(" + key + ", " + str(val) + ") "
+
+    symb_str = symb_str[:-1]
+
+    w = 1.5*len(categories.keys())
+    width = int(max(min(15, w), 12))
+    ostr = """\\begin{tikzpicture}
+\\begin{axis}[
+ybar,
+symbolic x coords={%s},
+xtick=data,
+bar width = 1.5cm,
+xlabel=%s,
+ylabel=%s,
+width=%dcm,
+ymajorgrids = true
+]
+\\addplot coordinates{%s};
+
+\\end{axis}
+
+\\end{tikzpicture}
+""" % (symb_str, x_label, y_label, width, plot_data_str)
+    f.write(ostr)
+    
+    
+#------------------------------
+def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True):
+    if show_work:
+        f.write("\\newpage\n")
+        f.write("\\question\n")
+    ostr = "The chart below shows the information third grade students collected about the %s of students in their classroom. " % cat_type.lower()
+    f.write(ostr + "\n\n");
+
+    draw_bar_chart(categories, cat_type, "Number of students")
+
+    cm = concat_items(mnames)
+    cp = concat_items(pnames)
+    mcombined = "combined" if len(mnames) > 1 else ""
+    pcombined = "combined" if len(pnames) > 1 else ""
+        
+    qs1 = "How many fewer students have %s %s %s than students that have %s %s %s?\n" % (cm, obj_name, mcombined, cp, obj_name, pcombined)
+    qs2 = "How many more students have %s %s %s than students that have %s %s %s?\n" % (cp, obj_name, pcombined, cm, obj_name, mcombined)
+    qs = qs1 if np.random.choice([1,2] ,1) == 1 else qs2
+    
+    f.write("\n" + qs)
+    if show_work:
+        print_show_work(3)
     
 ## Main---------------------------
 if len(sys.argv) <= 1:
@@ -382,6 +466,8 @@ what_situation(18, 9, "/")
 pattern(3, 4)
 
 what_situation(6, 5, "*")
+
+bar_chart({"Blue" : 2, "Grey": 7, "Brown" : 9, "Green" : 1}, "Eye color", ["Grey", "Brown"], ["Blue", "Green"], "eyes", show_work = True)
 
 end(f)
 f.close()
