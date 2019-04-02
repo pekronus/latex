@@ -12,8 +12,9 @@ Show your work.
 \\vskip %din
 \\begin{tikzpicture}
 \\draw (5,0) -- (10,0);
-\\draw (5,0) node[align=center, left]{Answer:}
+\\draw (5,0) node[align=center, left]{Answer:};
 \\end{tikzpicture}
+\\vspace{10in} 
 """ % vspace
     f.write(show_work_str)
 
@@ -197,7 +198,7 @@ def eqn_true(x, y, dv = True):
 
 #------------------------------
 def mult1(m, n, swhat):
-    qs = "There are %d students who brough %d %s to class. Which expression can be used to find the total number of toys that were brought to the play date?" % (m,n, swhat)
+    qs = "There are %d students who brough %d %s to class. Which expression can be used to find the total number of %s that were brought to the class by the students?" % (m,n, swhat, swhat)
     a = [];
     corr = "$%d \\times %d$" % (m, n)
     a.append(corr)
@@ -233,6 +234,27 @@ def time1(hh, mm, diff):
     a.append(str(tm.add_mins(diff-2)))
     print_answers(f, qs, a)
 
+def time2(hh, mm, travel_time, arrive = True):
+    tm = BasicTime(hh, mm)
+    rr = np.arange(len(gnames))
+    np.random.shuffle(rr)
+    n1 = gnames[rr[0]]
+    pronoun1 = "He" if n1 in boys_names else "She"
+    n2 = gnames[rr[1]]
+    if arrive:
+        qs = "%s met %s at the library at exactly %s.  It takes %s %d minutes to walk from school to the library. What time did %s leave the school?" % (n1, n2, str(tm), n1, travel_time, n1)
+    else:
+        qs = "It takes %s %d minutes to walk from school to home. %s left the school at %s. At what time will %s get home?" % (n1, travel_time, str(tm), pronoun1, str(tm), n1)
+    a = [];
+    corr = tm.add_mins(-travel_time) if arrive else tm.add_mins(travel_time)
+    incorr = tm.add_mins(travel_time) if arrive else tm.add_mins(-travel_time)
+    adds = np.random.choice([-5, -4, -3, -2,-1, 1, 2, 3, 4, 5], 2, replace = False)
+    a.append(str(corr))
+    a.append(str(incorr))
+    a.append(str(corr.add_mins(adds[0])))
+    a.append(str(corr.add_mins(adds[1])))
+    print_answers(f, qs, a)
+
 def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     # create random points
     pts = np.arange(ndivs)
@@ -255,7 +277,7 @@ def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     qdist = loc_pos if dist_to_0 else ndivs - loc_pos
     frac_str = "$\\frac{%d}{%d}$ miles" % (qdist, ndivs)
     to_str = label_names[0] if dist_to_0 else label_names[1]
-    f.write("%s buys %s at %s which is exactly %s from %s. What point on the number line show the location of the %s?\n" % (n1, label_names[2].lower(), label_names[3], frac_str, to_str.lower(), label_names[3]))
+    f.write("%s buys %s at %s which is exactly %s from %s. What point on the number line shows the location of the %s?\n" % (n1, label_names[2].lower(), label_names[3], frac_str, to_str.lower(), label_names[3]))
     f.write("\\begin{choices}\n")
     for a in ['A', 'B', 'C', 'D']:
         f.write("\\choice %s\n" % a)
@@ -426,19 +448,19 @@ np.random.seed(seed)
     
 f = open(sys.argv[1], "w")
 start(f)
-expr1_mult(f, 8, 8, 4)
+expr1_mult(f, 12, 8, 4)
 
 roundq(274, "The distance between two cities", "miles", 2)
 
 eqn_true(6, 4, dv=True)
 
-mult1(7, 3, "toy cars")
+mult1(12, 6, "mechanical pencils")
 
-cover1(12, 2)
+cover1(14, 2)
 
 time1(14, 2,-7)
 
-dist1(1, ["Home", "School", "ice cream", "store"], ndivs=8, loc_pos=3, dist_to_0 = True, scale_fact=4)
+dist1(1, ["Home", "School", "ice cream", "store"], ndivs=6, loc_pos=2, dist_to_0 = True, scale_fact=4)
 dist1(1, ["Home", "Grandparents", "candy", "store"], ndivs=8, loc_pos=6, dist_to_0 = False, scale_fact=4)
 #nl = NumberLine(1, "Home", "School", [1/8.0, 3/8.0, 5/8.0, 7/8.0], 8, scale_fact=4)
 #ss = io.StringIO()
@@ -448,6 +470,8 @@ which_nl(1, 4, ndivs=8, scale_fact = 8)
 which_nl(2, 3, ndivs=6, scale_fact = 8)
 
 last_and_this_week(4, 3, 5, 2)
+
+what_situation(10, 5, "+")
 
 time1(14, 58, 5)
 
@@ -461,6 +485,8 @@ small_and_big(1, 3, 2)
 
 frac_comparison(2, 6, 2, 5)
 
+expr1_mult(f, 6, 4, 3)
+
 what_situation(18, 9, "/")
 
 pattern(3, 4)
@@ -468,6 +494,8 @@ pattern(3, 4)
 what_situation(6, 5, "*")
 
 bar_chart({"Blue" : 2, "Grey": 7, "Brown" : 9, "Green" : 1}, "Eye color", ["Grey", "Brown"], ["Blue", "Green"], "eyes", show_work = True)
+
+time2(14, 28, 30, arrive = True)
 
 end(f)
 f.close()
