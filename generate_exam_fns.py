@@ -389,7 +389,7 @@ Which rule could have been used to make the pattern?""" % pstr[:-1]
 
 
 #--------------------
-def draw_bar_chart(categories, x_label, y_label):
+def draw_bar_chart(categories, x_label, y_label, put_qmark_last = False):
 
     symb_str = ""
     plot_data_str =""
@@ -399,8 +399,9 @@ def draw_bar_chart(categories, x_label, y_label):
 
     symb_str = symb_str[:-1]
 
-    w = 1.5*len(categories.keys())
+    w = 1.5*len(categories.keys()) + 2
     width = int(max(min(15, w), 12))
+    qloc = width - 2.5
     ostr = """\\begin{tikzpicture}
 \\begin{axis}[
 ybar,
@@ -416,29 +417,35 @@ ymajorgrids = true
 
 \\end{axis}
 
+\\draw (%3.2f,2)  node [align=center, above] {\\Huge \\bf ?};
+
 \\end{tikzpicture}
-""" % (symb_str, x_label, y_label, width, plot_data_str)
+""" % (symb_str, x_label, y_label, width, plot_data_str, qloc)
     f.write(ostr)
     
     
 #------------------------------
-def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True):
+def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True, put_qmark_last = False):
     if show_work:
         f.write("\\newpage\n")
         f.write("\\question\n")
     ostr = "The chart below shows the information third grade students collected about the %s of students in their classroom. " % cat_type.lower()
     f.write(ostr + "\n\n");
 
-    draw_bar_chart(categories, cat_type, "Number of students")
+    draw_bar_chart(categories, cat_type, "Number of students", put_qmark_last)
 
     cm = concat_items(mnames)
     cp = concat_items(pnames)
     mcombined = "combined" if len(mnames) > 1 else ""
     pcombined = "combined" if len(pnames) > 1 else ""
-        
-    qs1 = "How many fewer students have %s %s %s than students that have %s %s %s?\n" % (cm, obj_name, mcombined, cp, obj_name, pcombined)
-    qs2 = "How many more students have %s %s %s than students that have %s %s %s?\n" % (cp, obj_name, pcombined, cm, obj_name, mcombined)
-    qs = qs1 if np.random.choice([1,2] ,1) == 1 else qs2
+
+    if put_qmark_last:
+        fewerby = np.random.choice(np.arange(1,3), 1)
+        qs = "Find the number of students with %s %s if the total number of students that have %s %s  is %d fewer than the number of students with %s %s\n" % (mnames[-1].lower(), obj_name, cm, obj_name, fewerby, cp, obj_name)  
+    else:
+        qs1 = "How many fewer students have %s %s %s than students that have %s %s %s?\n" % (cm, obj_name, mcombined, cp, obj_name, pcombined)
+        qs2 = "How many more students have %s %s %s than students that have %s %s %s?\n" % (cp, obj_name, pcombined, cm, obj_name, mcombined)
+        qs = qs1 if np.random.choice([1,2] ,1) == 1 else qs2
     
     f.write("\n" + qs)
     if show_work:
