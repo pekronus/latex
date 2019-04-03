@@ -15,48 +15,78 @@ f = open(sys.argv[1], "w")
 gef.set_file_handle(f)
 
 gef.start()
-gef.expr1_mult(12, 8, 4)
 
-gef.roundq(274, "The distance between two cities", "miles", 2)
+inp = np.random.choice(np.arange(2,12), 3, replace=False)
+gef.expr1_mult(inp[0]*inp[2], inp[1], inp[2])
 
-gef.eqn_true(6, 4, dv=True)
+inp = np.random.choice(np.arange(111,999), 1)
+gef.roundq(inp[0], "The distance between two cities", "miles",  np.random.choice([1,2],1)[0])
 
-gef.mult1(12, 6, "mechanical pencils")
+inp = np.random.choice(np.arange(4,9), 2, replace=False)
+gef.eqn_true(inp[0], inp[1], dv = True)
 
-gef.cover1(14, 2)
+inp = np.random.choice(np.arange(4,13), 2, replace=False)
+gef.mult1(inp[0], inp[1], np.random.choice(["mechanical pencils", "toy cars", "tennis balls"]))
 
-gef.time1(14, 2,-7)
+gef.cover1(np.random.choice(np.arange(6,20)), np.random.choice([1,2]))
 
-gef.dist1(1, ["Home", "School", "ice cream", "store"], ndivs=6, loc_pos=2, dist_to_0 = True, scale_fact=4)
-gef.dist1(1, ["Home", "Grandparents", "candy", "store"], ndivs=8, loc_pos=6, dist_to_0 = False, scale_fact=4)
+hh = np.random.choice(np.arange(12,16))
+mm = np.random.choice(np.arange(1,25))
+diff = -np.random.choice(np.arange(mm,mm+10))
+gef.time1(hh, mm, diff)
+
+ndivs = np.random.choice([6, 8,10])
+loc_pos = np.random.choice([1,2,3])
+what = np.random.choice(["ice_cream", "candy", "toy", "donuts", "juice"])
+gef.dist1(1, ["Home", "School", what, "store"], ndivs, loc_pos, dist_to_0 = np.random.choice([True, False]), scale_fact=4)
+ndivs = np.random.choice([6, 8,10])
+loc_pos = np.random.choice([1,2,3])
+what = np.random.choice(["ice_cream", "candy", "toy", "donuts", "juice"])
+gef.dist1(1, ["Home", "School", what, "store"], ndivs, loc_pos, dist_to_0 = np.random.choice([True, False]), scale_fact=4)
+
 #nl = NumberLine(1, "Home", "School", [1/8.0, 3/8.0, 5/8.0, 7/8.0], 8, scale_fact=4)
 #ss = io.StringIO()
 #nl.draw(ss)
 #print(ss.getvalue())
-gef.which_nl(1, 4, ndivs=8, scale_fact = 8)
-gef.which_nl(2, 3, ndivs=6, scale_fact = 8)
+ndivs = np.random.choice([6, 8, 10])
+denom = ndivs / np.random.choice([1,2])
+num = np.random.choice(np.arange(1, denom))
+gef.which_nl(num, denom, ndivs, scale_fact = 8)
+
+ndivs = np.random.choice([6, 8, 10])
+denom = ndivs / np.random.choice([1,2])
+num = np.random.choice(np.arange(1, denom))
+gef.which_nl(num, denom, ndivs, scale_fact = 8)
 
 gef.last_and_this_week(4, 3, 5, 2)
 
-gef.what_situation(10, 5, "+")
+gef.what_situation(10, 5, "/")
 
-gef.time1(14, 58, 5)
+hh = np.random.choice(np.arange(12,16))
+mm = np.random.choice(np.arange(1,25))
+diff = -np.random.choice(np.arange(mm,mm+10))
+gef.time1(hh, mm, diff)
 
-gef.roundq(849, "The cost of an iPhone X", "dollars", 2)
 
-gef.pattern(6, 3)
+gef.roundq(821, "The cost of an iPhone X", "dollars", 2)
+
+gef.pattern(np.random.choice(np.arange(1,10)), np.random.choice([2,3,4,5]))
 
 gef.mult_basic("shopping center", 5, "floors", 25, "stores", end_q="")
 
 gef.small_and_big(1, 3, 2)
 
-gef.frac_comparison(2, 6, 2, 5)
+denoms = np.random.choice(np.arange(2,9),2, replace = False)
+num1 = np.random.choice(np.arange(1,denoms[0]))
+num2 = np.random.choice(np.arange(1,denoms[1]))
+gef.frac_comparison(num1, denoms[0], num2, denoms[1])
 
-gef.expr1_mult(6, 4, 3)
+inp = np.random.choice(np.arange(2,12), 3, replace=False)
+gef.expr1_mult(inp[0]*inp[2], inp[1], inp[2])
 
 gef.what_situation(18, 9, "/")
 
-gef.pattern(3, 4)
+gef.pattern(np.random.choice(np.arange(1,10)), np.random.choice([2,3,4,5]))
 
 gef.what_situation(6, 5, "*")
 

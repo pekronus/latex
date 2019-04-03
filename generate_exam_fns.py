@@ -161,8 +161,8 @@ def expr1_mult(x, y, d):
     qs = "What expression is another way of showing $ %d \\times %d $"  % (x,y)
     a = []
     a.append("$(%d \\times %d \\times %d ) $" % (x, y, d))
-    a.append("$(%d + %d) \\times %d  $" % (x, x/d, y))
-    a.append("$(%d \\times %d) + %d  $" % (x, y,  x/d))
+    a.append("$(%d \\times %d) \\times %d  $" % (x/d+1, d, y))
+    a.append("$(%d \\times %d) \\times %d  $" % (x/d, d+1, y))
     a.append("$(%d \\times %d) \\times %d  $" % (x/d, d, y)) # correct
     print_answers(f, qs, a)
 
