@@ -4,6 +4,8 @@ import io
 
 goperations  = ["/", "+", "-", "*"]
 
+gthings_to_buy = ["ice cream", "candy", "toy", "donuts", "juice"]
+
 boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
 girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
 gnames = list(boys_names.union(girl_names))
@@ -177,6 +179,12 @@ def expr1_mult(x, y, d):
     a.append("$(%d \\times %d) \\times %d  $" % (x/d, d, y)) # correct
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_expr_mult1():
+    inp = np.random.choice(np.arange(2,12), 3, replace=False)
+    expr1_mult(inp[0]*inp[2], inp[1], inp[2])
+
+    
 def mult_basic(something, n, name_of_container, m, name_of_object, end_q):
     qs = "A %s has %d %s that each can hold %d %s. What is the total number of %s %s?" % (something, n, name_of_container, m, name_of_object, name_of_object, end_q)
     a = []
@@ -199,12 +207,18 @@ def roundq(val, qstart, unit, d):
     a.append(int(round(val/10000, 4-(d-1))*10000))
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_roundq(what, unit):
+    inp = np.random.choice(np.arange(11,89), 1)
+    inp = 100*np.random.choice(np.arange(1,10), 1) + inp
+    roundq(inp[0], what, unit, np.random.choice([1,2],1)[0])
+    
 ##------------------------------
 def eqn_true(x, y, dv = True):
     s = "\\div " if dv else "\\times "
     qs = "What number makes the equation true $ %d = %s %s %d$ ?" % (x, "\\qm ", s ,y)
     a = [];
-    corr = x*y if dv else x/y
+    corr = x*y if dv else int(x/y)
     incorr = int(x/y) if dv else x*y
     a.append(corr)
     a.append(corr + 1)
@@ -212,6 +226,16 @@ def eqn_true(x, y, dv = True):
     a.append(incorr)
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_eqn_true():
+    div = np.random.choice([True, False])
+    inp = np.random.choice(np.arange(4,9), 2, replace=False)
+
+    if (div):
+        eqn_true(inp[0], inp[1], True)
+    else:
+        eqn_true(inp[0]*inp[1], inp[1], False)
+    
 #------------------------------
 def mult1(m, n, swhat):
     qs = "There are %d students who brough %d %s to class. Which expression can be used to find the total number of %s that were brought to the class by the students?" % (m,n, swhat, swhat)
@@ -223,6 +247,10 @@ def mult1(m, n, swhat):
     a.append("$%d \\times %d$" % (n,n))
     print_answers(f, qs, a)
 
+def rnd_mult1():
+    inp = np.random.choice(np.arange(4,13), 2, replace=False)
+    mult1(inp[0], inp[1], np.random.choice(["mechanical pencils", "toy cars", "tennis balls"]))
+    
 #------------------------------
 def cover1(n, side):
     qs = "A rectangle can be covered completely by %d square pieces of paper without gaps or overlaps. If each piece of paper has the side length of %d feet, what is the total area of the rectangle?" % (n,side)
@@ -234,6 +262,11 @@ def cover1(n, side):
     a.append(n)
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_cover1():
+    cover1(np.random.choice(np.arange(6,20)), np.random.choice([1,2]))
+
+    
 def time1(hh, mm, diff):
     tm = BasicTime(hh, mm)
     rr = np.arange(len(gnames))
@@ -250,6 +283,13 @@ def time1(hh, mm, diff):
     a.append(str(tm.add_mins(diff-2)))
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_time1():
+    hh = np.random.choice(np.arange(12,16))
+    mm = np.random.choice(np.arange(1,25))
+    diff = -np.random.choice(np.arange(mm,mm+10))
+    time1(hh, mm, diff)
+    
 def time2(hh, mm, travel_time, arrive = True):
     tm = BasicTime(hh, mm)
     rr = np.arange(len(gnames))
@@ -260,7 +300,7 @@ def time2(hh, mm, travel_time, arrive = True):
     if arrive:
         qs = "%s met %s at the library at exactly %s.  It takes %s %d minutes to walk from school to the library. What time did %s leave the school?" % (n1, n2, str(tm), n1, travel_time, n1)
     else:
-        qs = "It takes %s %d minutes to walk from school to home. %s left the school at %s. At what time will %s get home?" % (n1, travel_time, str(tm), pronoun1, str(tm), n1)
+        qs = "It takes %s %d minutes to walk from school to home. %s left the school at %s. At what time will %s get home?" % (n1, travel_time, pronoun1, str(tm), n1)
     a = [];
     corr = tm.add_mins(-travel_time) if arrive else tm.add_mins(travel_time)
     incorr = tm.add_mins(travel_time) if arrive else tm.add_mins(-travel_time)
@@ -271,6 +311,14 @@ def time2(hh, mm, travel_time, arrive = True):
     a.append(str(corr.add_mins(adds[1])))
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_time2():
+    arrive = np.random.choice([True, False])
+    hh = np.random.choice(np.arange(12,16))
+    mm = np.random.choice(np.arange(1,45))
+    travel_time = np.random.choice(np.arange(60-mm,60-mm + 10)) if arrive else np.random.choice(np.arange(mm,mm + 10))
+    time2(hh, mm, travel_time, arrive)
+    
 def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
     # create random points
     pts = np.arange(ndivs)
@@ -300,7 +348,13 @@ def dist1(tlen, label_names, ndivs, loc_pos, dist_to_0 = True, scale_fact=4):
         f.write("\\choice %s\n" % a)
     f.write("\\end{choices}\n")
 
-
+#--------------------
+def rnd_dist1():
+    ndivs = np.random.choice([6, 8,10])
+    loc_pos = np.random.choice([1,2,3])
+    what = np.random.choice(gthings_to_buy)
+    dist1(1, ["Home", "School", what, "store"], ndivs, loc_pos, dist_to_0 = np.random.choice([True, False]), scale_fact=4)
+    
 def which_nl(num, denom, ndivs, scale_fact = 8):
     corr_pos = num*ndivs/denom
     # create random points
@@ -322,6 +376,14 @@ def which_nl(num, denom, ndivs, scale_fact = 8):
         ss.close()
 
     print_answers(f, qs, a)
+
+#--------------------
+def rnd_which_nl():
+    ndivs = np.random.choice([6, 8, 10])
+    denom = int(ndivs / np.random.choice([1,2]))
+    num = np.random.choice(np.arange(1, denom))
+    which_nl(num, denom, ndivs, scale_fact = 8)
+
     
 #------------------------------
 def last_and_this_week(n1,d1,n2,d2):
@@ -336,6 +398,12 @@ def last_and_this_week(n1,d1,n2,d2):
     a.append("$%d + %d + %d + %d$" % (n1,d1,n2,d2))
     print_answers(f, qs, a)
 
+#--------------------
+def rnd_last_and_this_week():
+    inp = np.random.choice(np.arange(2,6), 4)
+    last_and_this_week(inp[0], inp[1], inp[2], inp[3])
+
+#--------------------
 def small_and_big(num, den, num2, den2):
     name = get_names(1)[0]
     pronoun = "He" if name in boys_names else "She"
@@ -351,6 +419,12 @@ def small_and_big(num, den, num2, den2):
     a.append(str(int((num2*den)/num/den2 + add[0])))
     print_answers(f, qs, a)
 
+def rnd_small_and_big():
+    den = np.random.choice([2,3,4])
+    den2 = np.random.choice([1, 1, den])
+    num2 = np.random.choice([2,3,4]) if den2 == 1 else np.random.choice(arange(2, den2+1))
+    small_and_big(1, den,num2, den2)
+    
 def frac_comparison(n1, d1, n2, d2):
     names = get_names(2)
     pronoun1 = "his" if names[0] in boys_names else "her"
@@ -363,6 +437,12 @@ def frac_comparison(n1, d1, n2, d2):
     a.append("$\\frac{%d}{%d} + \\frac{%d}{%d}$" % (n1,d1,n2,d2))
     print_answers(f, qs, a)
 
+def rnd_frac_comparison():
+    denoms = np.random.choice(np.arange(2,9),2, replace = False)
+    num1 = np.random.choice(np.arange(1,denoms[0]))
+    num2 = np.random.choice(np.arange(1,denoms[1]))
+    frac_comparison(num1, denoms[0], num2, denoms[1])
+    
 def what_situation(n1, n2, op = '/'):
     sop = op
     if op == "/":
@@ -406,7 +486,10 @@ Which rule could have been used to make the pattern?""" % pstr[:-1]
     a.append("Start with %d. Add %d each time to get the next number." % (0, add)) 
     print_answers(f, qs, a)
 
-
+#--------------------
+def rnd_pattern():
+    pattern(np.random.choice(np.arange(1,10)), np.random.choice([2,3,4,5]))
+    
 #--------------------
 def draw_bar_chart(categories, x_label, y_label, put_qmark_last = False):
 
