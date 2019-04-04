@@ -2,10 +2,15 @@ import sys
 import numpy as np
 import io
 
+goperations  = ["/", "+", "-", "*"]
+
 boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
 girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
 gnames = list(boys_names.union(girl_names))
 f = None # file handle
+
+def his_or_her(name):
+    return "his" if name in boys_names else "her"
 
 def set_file_handle(ff):
     global f
@@ -46,6 +51,8 @@ def get_names(n):
         ret.append(gnames[rr[i]])
     return ret
 
+def get_op():
+    return goperations[np.random.choice(np.arange(4))]
 
 class BasicTime:
     """A class for basic hour minute manipulations. Does not under satmd days """
@@ -143,10 +150,7 @@ def end():
     f.write("""\end{questions}
 \end{document}\n""")
 
-def print_answers(f, qs, a, shuffle = True):
-    f.write("\\begin{question}\n")
-    f.write (qs)
-    f.write("\n")
+def print_choices(a, shuffle=True):
     rr = np.arange(len(a))
     if shuffle:
         np.random.shuffle(rr)
@@ -154,6 +158,13 @@ def print_answers(f, qs, a, shuffle = True):
     for i in rr:
         f.write("\\choice %s\n" % a[i])
     f.write("\\end{choices}\n")
+    
+def print_answers(f, qs, a, shuffle = True):
+    f.write("\\begin{question}\n")
+    f.write (qs)
+    f.write("\n")
+
+    print_choices(a, shuffle)
     
     f.write("\\end{question}\n\n")
 #--------------------
@@ -297,7 +308,7 @@ def which_nl(num, denom, ndivs, scale_fact = 8):
     pts = np.delete(pts, [0, int(corr_pos)])
     locs = np.random.choice(pts, 3, replace=False)
     locs = np.append(locs, corr_pos)
-    
+
     lbl = "$\\frac{%s}{%s}$" % (num, denom)
     qs = "Which number line shows the fraction %s correctly?" % (lbl)
 
@@ -325,18 +336,19 @@ def last_and_this_week(n1,d1,n2,d2):
     a.append("$%d + %d + %d + %d$" % (n1,d1,n2,d2))
     print_answers(f, qs, a)
 
-def small_and_big(num, den, total):
+def small_and_big(num, den, num2, den2):
     name = get_names(1)[0]
     pronoun = "He" if name in boys_names else "She"
     pronoun2="his" if name in boys_names else "her"
-    plural = "s" if total > 1 else ""
-    qs = "%s has a cup that holds exactly $\\frac{%d}{%d}$ liters of water. %s has a bottle that holds %d liter%s of water. How many times does %s need to pour %s cup into the bottle to fill it completely?" % (name, num, den, pronoun, total, plural, pronoun.lower(), pronoun2)
+    plural = "s" if num2/den2 > 1 else ""
+    bottle_vlm_str = str(int(num2/den2)) if (num2 % den2 == 0) else "$\\frac{%d}{%d}$" % (num2, den2)
+    qs = "%s has a cup that holds exactly $\\frac{%d}{%d}$ liters of water. %s has a bottle that holds %s liter%s of water. How many times does %s need to pour %s cup into the bottle to fill it completely?" % (name, num, den, pronoun, bottle_vlm_str, plural, pronoun.lower(), pronoun2)
     a = []
     add = np.random.choice(np.arange(1, 4), 1)
-    a.append(str(int((total*den)/num)))
+    a.append(str(int((num2*den)/num/den2)))
     a.append(str(1))
     a.append("$\\frac{%d}{%d}$" % (num, den))
-    a.append(str(int((total*den)/num + add[0])))
+    a.append(str(int((num2*den)/num/den2 + add[0])))
     print_answers(f, qs, a)
 
 def frac_comparison(n1, d1, n2, d2):
@@ -366,8 +378,15 @@ def what_situation(n1, n2, op = '/'):
     a.append("Finding the total number of cars where there are %d groups of %d cars" % (n1, n2))
     a.append("Finding the number of candies when there is a group of %d candies and a group of %d candies" % (n1, n2))
     a.append("Finding the number of boys in a class when there is a total of %d students and %d of them are girls" % (n1, n2))
-    a.append("Finding the number of hours it takes for %s to bike to school if %s school is %d miles away and %s's speed on his bike is %d miles per hour" % (name, pronoun, n1, name, n2))
+    a.append("Finding the number of hours it takes for %s to bike to school if %s school is %d miles away and %s's speed on %s bike is %d miles per hour" % (name, pronoun, n1, name, pronoun, n2))
     print_answers(f, qs, a)
+
+def rnd_what_situation():
+    ns = np.random.choice(np.arange(3, 12),2, replace=False)
+    n1 = ns[0]*ns[1]
+    n2 = ns[1]
+    ops = get_op()
+    what_situation(n1, n2, ops)
     
 #------------------------------
 def pattern(start, add):
@@ -382,9 +401,9 @@ def pattern(start, add):
 Which rule could have been used to make the pattern?""" % pstr[:-1]
     a = []
     a.append("Start with %d. Add %d each time to get the next number." % (start, add)) # correct
-    a.append("Start with %d. Add %d each time to get the next number." % (start+1, add-1)) # correct
-    a.append("Start with %d. Add %d each time to get the next number." % (start, add+1)) # correct
-    a.append("Start with %d. Add %d each time to get the next number." % (0, add)) # correct
+    a.append("Start with %d. Add %d each time to get the next number." % (start+1, add-1)) 
+    a.append("Start with %d. Add %d each time to get the next number." % (start, add+1)) 
+    a.append("Start with %d. Add %d each time to get the next number." % (0, add)) 
     print_answers(f, qs, a)
 
 
@@ -417,11 +436,14 @@ ymajorgrids = true
 
 \\end{axis}
 
-\\draw (%3.2f,2)  node [align=center, above] {\\Huge \\bf ?};
 
-\\end{tikzpicture}
-""" % (symb_str, x_label, y_label, width, plot_data_str, qloc)
+""" % (symb_str, x_label, y_label, width, plot_data_str)
+    if put_qmark_last:
+        ostr += "\n\\draw (%3.2f,2)  node [align=center, above] {\\Huge \\bf ?};\n" % qloc
+    ostr += "\\end{tikzpicture}\n"
+
     f.write(ostr)
+
     
     
 #------------------------------
@@ -450,3 +472,36 @@ def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True, 
     f.write("\n" + qs)
     if show_work:
         print_show_work(3)
+
+
+def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
+    name = get_names(1)[0]
+    f.write("\\question The shape of %s's garden is shown below.\n" % name)
+
+    dmax = max(wmax, hmax)
+    scale = 1 if no_scale else round(10.0/dmax, 1);
+    s1 = """\\begin{center}
+\\begin{tikzpicture}	
+\\draw (0,0) -- (%5.2f,0) -- (%5.2f, %5.2f) -- (%5.2f,%5.2f) -- (%5.2f,%5.2f) -- (0, %5.2f) -- (0,0);
+""" % (wmax,  wmax, hmax, wmax - wmin, hmax, wmax - wmin, hmin, hmin)*scale 
+    f.write(s1 + "\n")
+
+    s2 = """\\draw (%s,0) node[align=center, below, yshift=-0.2cm]{%d ft};
+\\draw (%s,%s ) node[align=center, right, xshift=0.2cm, rotate=-90]{%d ft};
+\\draw (%s,%s) node[align=center, above]{%d ft};
+\draw (0,%s) node[align=center, left, rotate=90, yshift = 0.2cm]{4 ft};
+\\end{tikzpicture}	
+\\end{center}
+
+What is the area, in square feet, of %s's garden?
+""" % (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)*scale
+    f.write(s2 + "\n")
+
+    a = []
+    a.append(str(hmin*wmax + (wmax-wmin)*(hmax-hmin))) # correct
+    a.append(str(wmax*hmax))
+    a.append(str(wmin*hmin))
+    a.append(str(hmin*wmax))
+
+    print_choices(a, shuffle=True)
+    
