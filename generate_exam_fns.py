@@ -483,7 +483,7 @@ def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
     s1 = """\\begin{center}
 \\begin{tikzpicture}	
 \\draw (0,0) -- (%5.2f,0) -- (%5.2f, %5.2f) -- (%5.2f,%5.2f) -- (%5.2f,%5.2f) -- (0, %5.2f) -- (0,0);
-""" % (wmax,  wmax, hmax, wmax - wmin, hmax, wmax - wmin, hmin, hmin)*scale 
+""" % tuple([scale*n for n in (wmax,  wmax, hmax, wmax - wmin, hmax, wmax - wmin, hmin, hmin)])
     f.write(s1 + "\n")
 
     s2 = """\\draw (%s,0) node[align=center, below, yshift=-0.2cm]{%d ft};
@@ -494,7 +494,7 @@ def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
 \\end{center}
 
 What is the area, in square feet, of %s's garden?
-""" % (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)*scale
+""" % tuple([scale*n for n in (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)])
     f.write(s2 + "\n")
 
     a = []
@@ -505,3 +505,5 @@ What is the area, in square feet, of %s's garden?
 
     print_choices(a, shuffle=True)
     
+def rnd_garden_area():
+    pass
