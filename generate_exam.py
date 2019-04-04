@@ -99,7 +99,7 @@ gef.bar_chart({"Blue" : 3, "Grey": 6, "Brown" : 9, "Green" : 0}, "Eye color", ["
 
 gef.time2(14, 28, 30, arrive = True)
 
-gef.garden_area(5,9,4,6, False)
-
+gef.garden_area(5,9,4,6, True)
+gef.rnd_garden_area()
 gef.end()
 f.close()

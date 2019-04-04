@@ -483,18 +483,18 @@ def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
     s1 = """\\begin{center}
 \\begin{tikzpicture}	
 \\draw (0,0) -- (%5.2f,0) -- (%5.2f, %5.2f) -- (%5.2f,%5.2f) -- (%5.2f,%5.2f) -- (0, %5.2f) -- (0,0);
-""" % tuple([scale*n for n in (wmax,  wmax, hmax, wmax - wmin, hmax, wmax - wmin, hmin, hmin)])
+""" % tuple([scale*n for n in (wmax,  wmax, hmax, wmin, hmax, wmin, hmin, hmin)]) 
     f.write(s1 + "\n")
 
-    s2 = """\\draw (%s,0) node[align=center, below, yshift=-0.2cm]{%d ft};
-\\draw (%s,%s ) node[align=center, right, xshift=0.2cm, rotate=-90]{%d ft};
-\\draw (%s,%s) node[align=center, above]{%d ft};
-\draw (0,%s) node[align=center, left, rotate=90, yshift = 0.2cm]{4 ft};
+    s2 = """\\draw (%5.2f,0) node[align=center, below, yshift=-0.2cm]{%d ft};
+\\draw (%5.2f,%5.2f ) node[align=center, right, xshift=0.2cm, rotate=-90]{%d ft};
+\\draw (%5.2f,%5.2f) node[align=center, above]{%d ft};
+\draw (0,%5.2f) node[align=center, left, rotate=90, yshift = 0.2cm]{%d ft};
 \\end{tikzpicture}	
 \\end{center}
 
 What is the area, in square feet, of %s's garden?
-""" % tuple([scale*n for n in (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)])
+""" % (tuple([scale*n for n in (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)]) + (name,))
     f.write(s2 + "\n")
 
     a = []
@@ -506,4 +506,8 @@ What is the area, in square feet, of %s's garden?
     print_choices(a, shuffle=True)
     
 def rnd_garden_area():
-    pass
+    wmax = np.random.choice(np.arange(6,15))
+    wmin = np.random.choice(np.arange(2,wmax))
+    hmax = np.random.choice(np.arange(6,15))
+    hmin = np.random.choice(np.arange(2,hmax))
+    garden_area(wmin, wmax, hmin, hmax)
