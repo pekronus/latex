@@ -44,6 +44,9 @@ def concat_items(item_list):
         mnames_cc += n.lower() + " "
     return mnames_cc[:-1]
 
+def get_item(from_list):
+    l = len(from_list)
+    return from_list[np.random.choice(np.arange(l))]
 
 def get_names(n):
     rr = np.arange(len(gnames))
@@ -54,7 +57,7 @@ def get_names(n):
     return ret
 
 def get_op():
-    return goperations[np.random.choice(np.arange(4))]
+    return get_item(goperations)
 
 class BasicTime:
     """A class for basic hour minute manipulations. Does not under satmd days """
@@ -184,7 +187,7 @@ def rnd_expr_mult1():
     inp = np.random.choice(np.arange(2,12), 3, replace=False)
     expr1_mult(inp[0]*inp[2], inp[1], inp[2])
 
-    
+#--------------------    
 def mult_basic(something, n, name_of_container, m, name_of_object, end_q):
     qs = "A %s has %d %s that each can hold %d %s. What is the total number of %s %s?" % (something, n, name_of_container, m, name_of_object, name_of_object, end_q)
     a = []
@@ -194,6 +197,15 @@ def mult_basic(something, n, name_of_container, m, name_of_object, end_q):
     a.append(str(m*n + adds[0]))
     a.append(str(m*n + adds[1]))
     print_answers(f, qs, a)
+
+#--------------------
+def rnd_mult_basic():
+    item_map = {"shopping center" : "stores", "garage" : "cars", "building" : "apartments"}
+    loc = get_item(list(item_map.keys()))
+    name = item_map[loc];
+    nf = np.random.choice(np.arange(2, 11))
+    ni = np.random.choice(np.arange(5, 30))
+    mult_basic(loc, nf, "floors", ni, name, "")
     
 #------------------------------
 def roundq(val, qstart, unit, d):
@@ -422,7 +434,7 @@ def small_and_big(num, den, num2, den2):
 def rnd_small_and_big():
     den = np.random.choice([2,3,4])
     den2 = np.random.choice([1, 1, den])
-    num2 = np.random.choice([2,3,4]) if den2 == 1 else np.random.choice(arange(2, den2+1))
+    num2 = np.random.choice([2,3,4]) if den2 == 1 else np.random.choice(np.arange(2, den2+1))
     small_and_big(1, den,num2, den2)
     
 def frac_comparison(n1, d1, n2, d2):
@@ -557,7 +569,7 @@ def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True, 
         print_show_work(3)
 
 
-def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
+def garden_area(wmin, wmax, hmin, hmax, find_area = True, no_scale = False):
     name = get_names(1)[0]
     f.write("\\question The shape of %s's garden is shown below.\n" % name)
 
@@ -569,28 +581,58 @@ def garden_area(wmin, wmax, hmin, hmax, no_scale = False):
 """ % tuple([scale*n for n in (wmax,  wmax, hmax, wmin, hmax, wmin, hmin, hmin)]) 
     f.write(s1 + "\n")
 
-    s2 = """\\draw (%5.2f,0) node[align=center, below, yshift=-0.2cm]{%d ft};
+    wmax_str = "%d" % wmax if find_area else "?"
+    s2 = """\\draw (%5.2f,0) node[align=center, below, yshift=-0.2cm]{%s ft};
 \\draw (%5.2f,%5.2f ) node[align=center, right, xshift=0.2cm, rotate=-90]{%d ft};
 \\draw (%5.2f,%5.2f) node[align=center, above]{%d ft};
 \draw (0,%5.2f) node[align=center, left, rotate=90, yshift = 0.2cm]{%d ft};
 \\end{tikzpicture}	
 \\end{center}
-
-What is the area, in square feet, of %s's garden?
-""" % (tuple([scale*n for n in (wmax/2,wmax,  wmax,hmax/2,hmax, wmin/2,hmin,wmin, hmin/2,hmin)]) + (name,))
+""" % (wmax/2*scale,wmax_str,  wmax*scale,hmax*scale/2,hmax, wmin/2*scale,hmin*scale,wmin, hmin/2*scale,hmin)
     f.write(s2 + "\n")
 
     a = []
-    a.append(str(hmin*wmax + (wmax-wmin)*(hmax-hmin))) # correct
-    a.append(str(wmax*hmax))
-    a.append(str(wmin*hmin))
-    a.append(str(hmin*wmax))
+    carea = hmin*wmax + (wmax-wmin)*(hmax-hmin)
+    if (find_area):
+        qs = "What is the area, in square feet, of %s's garden?\n" % name
 
+        carea = hmin*wmax + (wmax-wmin)*(hmax-hmin)
+        a.append(str(carea)) # correct
+        a.append(str(wmax*hmax))
+        a.append(str(wmin*hmin))
+        a.append(str(hmin*wmax))
+    else:
+        qs = "What is the length of the side marked with ? in feet if the area of the garden = %d?\n" % carea
+        cwmax = (carea + wmin*(hmax - hmin))/hmax
+        a.append(str(cwmax)) # correct
+        a.append(str(cwmax+np.random.choice([1,2,3])))
+        a.append(str(cwmax - 1))
+        a.append(str(cwmax * 2))
+    f.write(qs)
     print_choices(a, shuffle=True)
-    
+
+#--------------------
 def rnd_garden_area():
     wmax = np.random.choice(np.arange(6,15))
     wmin = np.random.choice(np.arange(2,wmax))
     hmax = np.random.choice(np.arange(6,15))
     hmin = np.random.choice(np.arange(2,hmax))
-    garden_area(wmin, wmax, hmin, hmax)
+    find_area = np.random.choice([False, True, True])
+    garden_area(wmin, wmax, hmin, hmax, find_area)
+
+#--------------------
+def equiv_frac(n, denom):
+    qs = "Which fraction is equivalent to %d?" % n
+    a = []
+    corr = "$\\frac{%d}{%d}$" % (n*denom, denom)
+    a.append(corr)
+    a.append("$\\frac{%d}{%d}$" % (n*denom+np.random.choice([2,4]), denom))
+    a.append("$\\frac{%d}{%d}$" % (n*denom, denom + np.random.choice([-1,1])))
+    a.append("$\\frac{%d}{%d}$" % (denom, n*denom))
+    print_answers(f, qs, a)
+    
+#--------------------
+def rnd_equiv_frac():
+    n = np.random.choice(np.arange(1,6))
+    denom = np.random.choice(np.arange(1,4))
+    equiv_frac(n, denom)

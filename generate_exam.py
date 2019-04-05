@@ -51,7 +51,7 @@ gef.rnd_roundq("The cost of a new phone", "dollars")
 
 gef.rnd_pattern()
 
-gef.mult_basic("shopping center", 5, "floors", 25, "stores", end_q="")
+gef.rnd_mult_basic()
 
 gef.rnd_small_and_big()
 gef.rnd_small_and_big()
@@ -75,8 +75,10 @@ gef.rnd_time2()
 gef.rnd_time2()
 
 gef.rnd_garden_area()
-
 gef.rnd_garden_area()
+
+gef.rnd_equiv_frac()
+gef.rnd_equiv_frac()
 
 gef.end()
 f.close()
