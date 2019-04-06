@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import io
+import operator
 
 goperations  = ["/", "+", "-", "*"]
 
@@ -9,6 +10,10 @@ gthings_to_buy = ["ice cream", "candy", "toy", "donuts", "juice"]
 boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
 girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
 gnames = list(boys_names.union(girl_names))
+
+glastnames = ["Jones", "Rodriguez", "Cohen", "Jordan", "Blackwell", "Sanders"]
+
+
 f = None # file handle
 
 def his_or_her(name):
@@ -135,6 +140,34 @@ class NumberLine:
         f.write("\\end{tikzpicture}\n")
 
 
+#--------------------
+class SpinnerPic:
+    def __init__(self, divs, radius = 2.0):
+        self.divs = divs
+        self.radius = radius
+        step = int(360/divs)
+        self.angles = np.arange(0, 360, step)
+
+    def draw_divs_and_arrow(self, f):
+        for a in self.angles:
+            ss = "\\draw (0,0) -- (%d:%5.2fcm);\n" % (a, self.radius)
+            f.write(ss)
+        # draw pointer
+        ss = "\\draw[->, ultra thick] (0,0) -- (%d:%5.2fcm);\n" % (np.random.choice(np.arange(0,360)), self.radius*0.75)
+        f.write(ss)
+        
+    def draw(self, f):
+        ostr = """\\begin{tikzpicture}
+\\fill [black] (0,0) circle(0.1cm);
+\\draw (0,0) circle(%5.2fcm);
+""" % self.radius
+        f.write(ostr)
+
+        self.draw_divs_and_arrow(f)
+        
+        f.write("\\end{tikzpicture}\n")
+
+        
 def start():
     f.write("\\documentclass{exam}\n")
     f.write("\\newcommand{\\qm}{\\underline{\\hspace{0.3cm}?\hspace{0.3cm}}}\n");
@@ -216,14 +249,21 @@ def roundq(val, qstart, unit, d):
     a.append(corr)
     a.append(val)
     a.append(corr - 10**d if corr > val else corr + 10**d)
-    a.append(int(round(val/10000, 4-(d-1))*10000))
+    a.append(int(round(val/10000, 3-d)*10000))
     print_answers(f, qs, a)
 
 #--------------------
-def rnd_roundq(what, unit):
-    inp = np.random.choice(np.arange(11,89), 1)
-    inp = 100*np.random.choice(np.arange(1,10), 1) + inp
-    roundq(inp[0], what, unit, np.random.choice([1,2],1)[0])
+def rnd_roundq():
+    choices = {"The distance between two cities": "miles",
+               "The cost of a new phone" : "dollars",
+               "The height of a building" : "feet",
+               "The width of a river" : "meters"}
+    keys = list(choices.keys())
+    key = get_item(keys)
+    unit = choices[key]
+    inp2 = np.random.choice(np.arange(11,89))
+    inp = 10*inp2 + np.random.choice(np.arange(1, 10))
+    roundq(inp, key, unit, np.random.choice([1,2]))
     
 ##------------------------------
 def eqn_true(x, y, dv = True):
@@ -250,7 +290,7 @@ def rnd_eqn_true():
     
 #------------------------------
 def mult1(m, n, swhat):
-    qs = "There are %d students who brough %d %s to class. Which expression can be used to find the total number of %s that were brought to the class by the students?" % (m,n, swhat, swhat)
+    qs = "There are %d students who brought %d %s to class. Which expression can be used to find the total number of %s that were brought to the class by the students?" % (m,n, swhat, swhat)
     a = [];
     corr = "$%d \\times %d$" % (m, n)
     a.append(corr)
@@ -568,7 +608,27 @@ def bar_chart(categories, cat_type, pnames, mnames, obj_name, show_work = True, 
     if show_work:
         print_show_work(3)
 
+#--------------------
+def rnd_bar_chart():
+    colors = ["Grey", "Brown", "Blue", "Green", "Hazel"]
+    chosen_colors = np.random.choice(colors, 4, replace=False)
+    counts = np.random.choice(np.arange(1, 10), 4, replace = False)
+    categories = dict(zip(chosen_colors, counts))
 
+    put_qmark = np.random.choice([True, False])
+    
+    srt = sorted(categories.items(), key = operator.itemgetter(1), reverse=True)
+    pnames = [srt[0][0], srt[1][0]]
+    mnames = [srt[2][0], srt[3][0]]
+    
+    
+    if put_qmark:
+        perm = np.random.choice(np.arange(3),3, replace=False)
+        categories = dict([srt[perm[0]], srt[perm[1]], srt[perm[2]]])
+        categories[mnames[-1]] = 0
+    
+    bar_chart(categories, "Eye color", pnames, mnames, "eyes", show_work=True, put_qmark_last = put_qmark)
+    
 def garden_area(wmin, wmax, hmin, hmax, find_area = True, no_scale = False):
     name = get_names(1)[0]
     f.write("\\question The shape of %s's garden is shown below.\n" % name)
@@ -636,3 +696,26 @@ def rnd_equiv_frac():
     n = np.random.choice(np.arange(1,6))
     denom = np.random.choice(np.arange(1,4))
     equiv_frac(n, denom)
+
+#--------------------
+def spinner_game(ndiv, lname, choices):
+
+    frac_str = "$\\frac{1}{%d}$" % ndiv
+    qs = "The %s family uses a spinner to play a game. The spinner was in the shape of a circle.  Each section of the spinner was %s of the whole circle. Which picture shows the correct spinner?" % (lname, frac_str)
+    a = []
+    for divs in choices:
+        sp = SpinnerPic(divs)
+        ss = io.StringIO()
+        sp.draw(ss)
+        a.append(ss.getvalue())
+        ss.close()
+
+    print_answers(f, qs, a)
+
+def rnd_spinner_game():
+    poss_divs = np.array([2,3,4,5,6,8,10]);
+    choices = np.random.choice(poss_divs, 4, replace=False)
+
+    lname = get_item(glastnames)
+    spinner_game(choices[0], lname, choices)
+    
