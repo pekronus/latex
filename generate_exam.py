@@ -38,7 +38,8 @@ gfuncs = [gef.rnd_expr_mult1,
           gef.rnd_garden_area,
           gef.rnd_equiv_frac,
           gef.rnd_spinner_game,
-          gef.rnd_bar_chart
+          gef.rnd_bar_chart,
+          gef.rnd_buying
 ]
 
 gef.start()

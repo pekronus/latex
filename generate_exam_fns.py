@@ -7,8 +7,8 @@ goperations  = ["/", "+", "-", "*"]
 
 gthings_to_buy = ["ice cream", "candy", "toy", "donuts", "juice"]
 
-boys_names = {"John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
-girl_names = {"Sally", "Esther",  "Monica", "Julia",  "Jessica"}
+boys_names = {"Yury", "Victor", "Arnold", "John", "Juan", "Daniel", "Brian",  "Adam", "Michael"}
+girl_names = {"Nataliya", "Inga", "Mila", "Sally", "Esther",  "Monica", "Julia",  "Jessica"}
 gnames = list(boys_names.union(girl_names))
 
 glastnames = ["Jones", "Rodriguez", "Cohen", "Jordan", "Blackwell", "Sanders"]
@@ -18,6 +18,8 @@ f = None # file handle
 
 def his_or_her(name):
     return "his" if name in boys_names else "her"
+def him_or_her(name):
+    return "him" if name in boys_names else "her"
 
 def set_file_handle(ff):
     global f
@@ -316,7 +318,7 @@ def cover1(n, side):
 
 #--------------------
 def rnd_cover1():
-    cover1(np.random.choice(np.arange(6,20)), np.random.choice([1,2]))
+    cover1(np.random.choice(np.arange(6,20)), np.random.choice([2,3]))
 
     
 def time1(hh, mm, diff):
@@ -481,7 +483,7 @@ def frac_comparison(n1, d1, n2, d2):
     names = get_names(2)
     pronoun1 = "his" if names[0] in boys_names else "her"
     pronoun2 = "his" if names[1] in boys_names else "her"
-    qs = "%s and %s got identical pizzas. %s ate $\\frac{%d}{%d}$ of %s pizza, while %s  ate $\\frac{%d}{%d}$ of %s pizza. Which statement shows a correct comparisons of the portions of pizza that % and %s ate?" % (names[0], names[1], names[0], n1, d1, pronoun1, names[1], n2, d2, pronoun2, names[0], names[1])
+    qs = "%s and %s got identical pizzas. %s ate $\\frac{%d}{%d}$ of %s pizza, while %s  ate $\\frac{%d}{%d}$ of %s pizza. Which statement shows a correct comparisons of the portions of pizza that %s and %s ate?" % (names[0], names[1], names[0], n1, d1, pronoun1, names[1], n2, d2, pronoun2, names[0], names[1])
     a = []
     a.append("$\\frac{%d}{%d} = \\frac{%d}{%d}$" % (n1,d1,n2,d2))
     a.append("$\\frac{%d}{%d} < \\frac{%d}{%d}$" % (n1,d1,n2,d2))
@@ -490,10 +492,11 @@ def frac_comparison(n1, d1, n2, d2):
     print_answers(f, qs, a)
 
 def rnd_frac_comparison():
-    denoms = np.random.choice(np.arange(2,9),2, replace = False)
-    num1 = np.random.choice(np.arange(1,denoms[0]))
-    num2 = np.random.choice(np.arange(1,denoms[1]))
-    frac_comparison(num1, denoms[0], num2, denoms[1])
+    denom1 = np.random.choice([2,3,4])
+    denom2 = denom1 * np.random.choice([1,2,3])
+    num1 = np.random.choice(np.arange(1,denom1))
+    num2 = np.random.choice(np.arange(1,denom2))
+    frac_comparison(num1, denom1, num2, denom2)
     
 def what_situation(n1, n2, op = '/'):
     sop = op
@@ -719,3 +722,25 @@ def rnd_spinner_game():
     lname = get_item(glastnames)
     spinner_game(choices[0], lname, choices)
     
+
+def buying1(n1, item1, price1, n2, item2, price2):
+    name = get_names(1)[0]
+    pronoun = him_or_her(name)
+    qs = "%s's dad bought %s %d %s for %d dollars each and %d %s for %d dollars each. How many dolar did he spend in total?" % (name, pronoun, n1, item1, price1, n2, item2, price2)
+    a = []
+    a.append(str(n1*price1 + n2*price2))
+    a.append(str(n1*price1 + price2))
+    a.append(str(price1 + price2))
+    a.append(str(n1*price1 + n2*price2 + 10))
+    print_answers(f, qs, a)
+
+def rnd_buying():
+    item_list = ["boxes of pencils", "boxes of pens", "brushes", "note books", "comic books"]
+    items = np.random.choice(np.arange(len(item_list)), 2, replace=False)
+    item1 = item_list[items[0]]
+    item2 = item_list[items[1]]
+    n1 = np.random.choice(np.arange(2, 6))
+    n2 = np.random.choice(np.arange(2, 6))
+    p1 = np.random.choice(np.arange(5, 11))
+    p2 = np.random.choice(np.arange(5, 11))
+    buying1(n1, item1, p1, n2, item2, p2)
