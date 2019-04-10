@@ -723,7 +723,7 @@ def rnd_spinner_game():
     spinner_game(choices[0], lname, choices)
     
 
-def buying1(n1, item1, price1, n2, item2, price2):
+def buying(n1, item1, price1, n2, item2, price2):
     name = get_names(1)[0]
     pronoun = him_or_her(name)
     qs = "%s's dad bought %s %d %s for %d dollars each and %d %s for %d dollars each. How many dolar did he spend in total?" % (name, pronoun, n1, item1, price1, n2, item2, price2)
@@ -743,4 +743,4 @@ def rnd_buying():
     n2 = np.random.choice(np.arange(2, 6))
     p1 = np.random.choice(np.arange(5, 11))
     p2 = np.random.choice(np.arange(5, 11))
-    buying1(n1, item1, p1, n2, item2, p2)
+    buying(n1, item1, p1, n2, item2, p2)
