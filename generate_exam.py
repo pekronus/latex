@@ -44,10 +44,6 @@ gfuncs = [gef.rnd_expr_mult1,
 ]
 
 gef.start()
-gef.rnd_roundq2()
-gef.rnd_roundq2()
-gef.rnd_roundq2()
-
 
 fchoices = np.random.choice(np.arange(len(gfuncs)), Ngen)
 for i in fchoices:
