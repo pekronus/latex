@@ -39,10 +39,15 @@ gfuncs = [gef.rnd_expr_mult1,
           gef.rnd_equiv_frac,
           gef.rnd_spinner_game,
           gef.rnd_bar_chart,
-          gef.rnd_buying
+          gef.rnd_buying,
+          gef.rnd_roundq2
 ]
 
 gef.start()
+gef.rnd_roundq2()
+gef.rnd_roundq2()
+gef.rnd_roundq2()
+
 
 fchoices = np.random.choice(np.arange(len(gfuncs)), Ngen)
 for i in fchoices:

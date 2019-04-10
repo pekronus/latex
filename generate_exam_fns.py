@@ -25,6 +25,39 @@ def set_file_handle(ff):
     global f
     f = ff
 
+def my_round(w, d):
+    return int(round(round(w/10000, 4-d)*10000, 0))
+    
+def print_table(vals, headings):
+    nrows, ncols = vals.shape
+    if (ncols != len(headings)):
+        print("**** Error in table ****\n")
+        return
+    ss = io.StringIO()
+
+    for _ in np.arange(ncols):
+        ss.write("|c")
+    ss.write("|")
+    
+    f.write("\\begin{center}\n")
+    f.write("\\begin{tabular}{%s}\n" % ss.getvalue() )
+    ss.close()
+    f.write("\\hline \n")
+    for j in np.arange(ncols):
+        f.write("%s%s" % (("" if j == 0 else "&"), headings[j]))
+    f.write("\\\\ \n")
+
+    f.write("\\hline \n")
+    for i in np.arange(nrows):
+        for j in np.arange(ncols):
+            f.write("%s%d" % (("" if j == 0 else "&"), vals[i][j]))
+        f.write("\\\\ \n")
+        f.write("\\hline \n")
+        
+    f.write("\\end{tabular}\n")
+    f.write("\\end{center}\n")
+    
+
 def print_show_work(vspace):
     show_work_str = """
 Show your work.
@@ -247,11 +280,11 @@ def roundq(val, qstart, unit, d):
     r_str = "hundred" if d == 2 else "ten" if d == 1 else "thousand"
     qs = "%s is %d %s. Round it to the nearest %s" % (qstart, val, unit, r_str)
     a = [];
-    corr = int(round(val/10000, 4-d)*10000)
+    corr = my_round(val,d)
     a.append(corr)
     a.append(val)
     a.append(corr - 10**d if corr > val else corr + 10**d)
-    a.append(int(round(val/10000, 3-d)*10000))
+    a.append(my_round(val, 2 if d == 1 else 2))
     print_answers(f, qs, a)
 
 #--------------------
@@ -266,6 +299,48 @@ def rnd_roundq():
     inp2 = np.random.choice(np.arange(11,89))
     inp = 10*inp2 + np.random.choice(np.arange(1, 10))
     roundq(inp, key, unit, np.random.choice([1,2]))
+
+
+    
+#------------------------------
+def roundq2(vals, d, round_wrong_direction):
+    r_str = "hundred" if d == 2 else "ten" if d == 1 else "thousand"
+    qs = "The table below shows numbers rounded to %s.  Which number is rounded incorrectly?\n" % r_str
+
+    f.write("\\question %s" % qs)
+    vs = np.zeros([len(vals),2])
+    for i in np.arange(len(vals)):
+        vs[i][0] = vals[i]
+        vs[i][1] = my_round(vals[i], d)
+    # pick random position to make incorrect
+    p = np.random.choice(np.arange(len(vals)))
+    if (round_wrong_direction):
+        if (vs[p][1] > vs[p][0]):
+            vs[p][1] -= 10**d
+        else:
+            vs[p][1] += 10**d
+    else:
+        dd = 2 if d == 1 else 1
+        saved = vs[p][1]
+        vs[p][1]  = my_round(vals[p], dd)
+        if saved == vs[p][1]:
+            vs[p][1] -= 10
+    
+    print_table(vs, ["Starting number", "Rounded to nearest %s" % r_str])
+    
+    a = [];
+    for n in vals:
+        a.append(str(n))
+    print_choices(a, shuffle = False)
+
+#--------------------
+def rnd_roundq2():
+
+    vals = np.random.choice(np.arange(100, 1000), 4, replace = False)
+    error_type = np.random.choice([True, False])
+    d = np.random.choice([1,2])
+    roundq2(vals, d, error_type)
+
     
 ##------------------------------
 def eqn_true(x, y, dv = True):
@@ -443,7 +518,7 @@ def rnd_which_nl():
 def last_and_this_week(n1,d1,n2,d2):
     name = get_names(1)[0]
     pronoun = "he" if name in boys_names else "she"
-    qs = "Last week %s ate %d chocolates a day for %d days.  This week, %s ate %d chocolates a day for %d days. Which expression can be used to represent the total number of chocolates %s ate in the last two weeks?\n" % (name, n1, d1, pronoun, n2, d2, name)
+    qs = "Last week %s ate %d chocolates a day for %d days.  This week, %s ate %d chocolates a day for %d days. Which expresions can be used to represent the total number of chocolates %s ate in the last two weeks?\n" % (name, n1, d1, pronoun, n2, d2, name)
     a = [];
     corr = "$%d \\times %d + %d \\times %d$" % (n1,d1,n2,d2)
     a.append(corr)
@@ -744,3 +819,4 @@ def rnd_buying():
     p1 = np.random.choice(np.arange(5, 11))
     p2 = np.random.choice(np.arange(5, 11))
     buying(n1, item1, p1, n2, item2, p2)
+
