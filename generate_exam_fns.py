@@ -16,6 +16,8 @@ glastnames = ["Jones", "Rodriguez", "Cohen", "Jordan", "Blackwell", "Sanders"]
 
 f = None # file handle
 
+def he_or_she(name):
+    return "he" if name in boys_names else "she"
 def his_or_her(name):
     return "his" if name in boys_names else "her"
 def him_or_her(name):
@@ -820,3 +822,23 @@ def rnd_buying():
     p2 = np.random.choice(np.arange(5, 11))
     buying(n1, item1, p1, n2, item2, p2)
 
+#------------------------------
+def equiv_weight(unit, n1, mult):
+    name = get_names(1)[0]
+    pronoun = he_or_she(name)
+    qs = "%s puts a %d %s weight on a pan balance.  How many %d %s weights does %s need to balance the scales" % (name, n1*mult, unit, n1, unit, pronoun)
+    a = []
+    a.append(str(mult))
+    a.append(str(n1))
+    incorr = mult + np.random.choice([1, 2, 3])
+    a.append(str(incorr))
+    a.append(str(mult*2))
+    print_answers(f, qs, a)
+
+#--------------------
+def rnd_equiv_weight():
+    unit = np.random.choice(["gram", "pound", "kilogram"])
+    n1 = np.random.choice([1,2,5,10,100])
+    mult = np.random.choice([5,10,20,25])
+    equiv_weight(unit, n1, mult)
+            

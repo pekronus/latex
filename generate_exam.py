@@ -40,7 +40,8 @@ gfuncs = [gef.rnd_expr_mult1,
           gef.rnd_spinner_game,
           gef.rnd_bar_chart,
           gef.rnd_buying,
-          gef.rnd_roundq2
+          gef.rnd_roundq2,
+          gef.rnd_equiv_weight
 ]
 
 gef.start()
