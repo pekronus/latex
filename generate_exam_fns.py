@@ -13,6 +13,8 @@ gnames = list(boys_names.union(girl_names))
 
 glastnames = ["Jones", "Rodriguez", "Cohen", "Jordan", "Blackwell", "Sanders"]
 
+places_with_seats = ["stadium", "movie theater", "theater", "community center"]
+
 
 f = None # file handle
 
@@ -100,6 +102,9 @@ def get_names(n):
 
 def get_op():
     return get_item(goperations)
+
+def get_place():
+    return get_item(places_with_seats)
 
 class BasicTime:
     """A class for basic hour minute manipulations. Does not under satmd days """
@@ -841,4 +846,21 @@ def rnd_equiv_weight():
     n1 = np.random.choice([1,2,5,10,100])
     mult = np.random.choice([5,10,20,25])
     equiv_weight(unit, n1, mult)
-            
+
+#---------------------
+def mult_or_div():
+    div = np.random.choice([False, True])
+    qs = 'Find the answer to: '
+    if div:
+        n1 = np.random.randint(121, 1000)
+        n2 = np.random.randint(3, 10) 
+    else:
+        n1 = np.random.randint(12, 100)
+        n2 = np.random.randint(12, 100)
+
+    qs += "$%d %s %d = ?$. Show your work" % (n1, ('\\div' if div else '\\times'), n2)
+    
+    f.write("\\question\n")
+    f.write(qs);
+    f.write('\\vspace{3in}')
+    f.write('\n\n')
