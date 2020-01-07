@@ -20,12 +20,16 @@ np.random.seed(seed)
 f = open(sys.argv[1], "w")
 gef.set_file_handle(f)
 
-gfuncs = [gef.mult_or_div
+gfuncs = [gef.mult_or_div,
+          gef.frac_multiply,
+          gef.multiple_less_than,
+          gef.true_comparison
 ]
 
 gef.start()
 
 fchoices = np.random.choice(np.arange(len(gfuncs)), Ngen)
+print(fchoices)
 for i in fchoices:
     gfuncs[i]()
 

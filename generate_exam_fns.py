@@ -31,7 +31,12 @@ def set_file_handle(ff):
 
 def my_round(w, d):
     return int(round(round(w/10000, 4-d)*10000, 0))
-    
+
+def pick_frac(max_denom=11):
+    denom =  np.random.randint(3, max_denom)
+    num = np.random.randint(1, denom)
+    return num, denom
+
 def print_table(vals, headings):
     nrows, ncols = vals.shape
     if (ncols != len(headings)):
@@ -864,3 +869,58 @@ def mult_or_div():
     f.write(qs);
     f.write('\\vspace{3in}')
     f.write('\n\n')
+
+def frac_multiply():
+    actions = ['walk', 'bike', 'run']
+    verb = get_item(actions)
+    n = get_names(1)[0]
+    unit = get_item(['miles', 'kilometers'])
+    hos = he_or_she(n)
+    ndays = np.random.randint(2, 7)
+
+    num, denom = pick_frac(12)
+    qs = "%s %ss $\\frac{%d}{%d}$ %s a day. How many %s does %s %s in %d days?" % (n, verb, num, denom, unit, unit, hos,verb, ndays)
+    a = []
+    
+    corr = "$\\frac{%d}{%d}$" % (ndays*num, denom)
+    a.append(corr)
+    a.append("$\\frac{%d}{%d}$" % (ndays+num, denom))
+    a.append("$\\frac{%d}{%d}$" % (ndays*num, denom*ndays))
+    a.append("$\\frac{%d}{%d}$" % (num, ndays*denom))
+    print_answers(f, qs, a)
+
+def multiple_less_than():
+    n1 = np.random.randint(5, 10)
+    corr = n1*np.random.randint(3, 10)
+    n2 = corr + np.random.randint(2, n1)
+    qs = 'Which is the  multiple of %d that is less than %d?' % (n1, n2)
+
+    a = []
+    a.append(corr)
+    a.append(corr-1)
+    a.append(corr + np.random.randint(2,4)*n1)
+    a.append(corr - (n1*2)//3)
+    print_answers(f, qs, a)
+
+def true_comparison():
+
+    qs = "Which comparison is true?"
+    num, denom = pick_frac(11)
+    mult = np.random.randint(2,5)
+    corr = '$\\frac{%d}{%d} = \\frac{%d}{%d}$' % (num, denom, num*mult, denom*mult)
+
+    a = []
+    a.append(corr)
+    for _ in range(3):
+        n1,d1 = pick_frac(15)
+        n2,d2 = pick_frac(15)
+        diff = n1*d2- n2*d1
+        sign = '='
+        if (diff < 0):
+            sign = get_item(['=', '>'])
+        elif (diff > 0):
+            sign = get_item(['=', '<'])
+
+        c = '$\\frac{%d}{%d} %s \\frac{%d}{%d}$' % (n1,d1, sign, n2, d2)
+        a.append(c)
+    print_answers(f, qs, a)
