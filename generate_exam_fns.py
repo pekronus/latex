@@ -920,7 +920,8 @@ def true_comparison():
             sign = get_item(['=', '>'])
         elif (diff > 0):
             sign = get_item(['=', '<'])
-
+        else:
+            sign = get_item(['>', '<'])
         c = '$\\frac{%d}{%d} %s \\frac{%d}{%d}$' % (n1,d1, sign, n2, d2)
         a.append(c)
     print_answers(f, qs, a)
