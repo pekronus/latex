@@ -186,6 +186,34 @@ class NumberLine:
         self.draw_start_end_labels(f)
         f.write("\\end{tikzpicture}\n")
 
+#--------------------
+class BasicShape:
+    names = {0 : 'a line',
+             1 : 'a line segment',
+             2 : 'a ray',
+             3 : 'an angle'}
+    def __init__(self, tlen, stype):
+        self.tlen = tlen
+        self.stype = stype
+        
+
+    def name(self):
+        return self.names.get(self.stype, 'invalid shape')
+
+    def draw(self, f):
+        f.write("\\begin{tikzpicture}\n")
+        if self.stype == 0:
+            f.write("\\draw [thick, <->] (0,0)  -- (%5.2f,0);\n" % (self.tlen))
+        elif self.stype == 1:
+            f.write("\\filldraw [thick] (0,0) circle(1pt) -- (%5.2f,0) circle(1pt);\n" % (self.tlen))
+        elif self.stype == 2:
+            f.write("\\draw [thick, ->] (0,0)  -- (%5.2f,0);\n" % (self.tlen))
+            f.write("\\fill (0,0) circle(1pt);\n")
+        else:
+            f.write("\\draw [thick, ->] (0,0) -- (%5.2f,0);\n" % (self.tlen))
+            f.write("\\draw [thick, ->] (0,0)  -- (%5.2f,%5.2f);\n" % (self.tlen/np.sqrt(2), self.tlen/np.sqrt(2)))
+            f.write("\\fill (0,0) circle(1pt);\n")
+        f.write("\\end{tikzpicture}\n")
 
 #--------------------
 class SpinnerPic:
@@ -907,7 +935,13 @@ def true_comparison():
     qs = "Which comparison is true?"
     num, denom = pick_frac(11)
     mult = np.random.randint(2,5)
-    corr = '$\\frac{%d}{%d} = \\frac{%d}{%d}$' % (num, denom, num*mult, denom*mult)
+    v = np.random.randint(10)
+    if v <= 7:
+        corr = '$\\frac{%d}{%d} = \\frac{%d}{%d}$' % (num, denom, num*mult, denom*mult)
+    elif v == 8:
+        corr = '$\\frac{%d}{%d} < \\frac{%d}{%d}$' % (num, denom, num*mult+1, denom*mult)
+    else:
+        corr = '$\\frac{%d}{%d} > \\frac{%d}{%d}$' % (num+1, denom, num*mult+1, denom*mult)
 
     a = []
     a.append(corr)
@@ -924,4 +958,35 @@ def true_comparison():
             sign = get_item(['>', '<'])
         c = '$\\frac{%d}{%d} %s \\frac{%d}{%d}$' % (n1,d1, sign, n2, d2)
         a.append(c)
+    print_answers(f, qs, a)
+
+def multi_part_diff():
+    n = get_names(1)[0]
+    hos = he_or_she(n)
+    mult = np.random.randint(2,4)
+    n1 = np.random.randint(19, 31)
+    n2 = mult*n1
+    n3 = np.random.randint(19, 41)
+    total = n1 + n2 + n3
+    qs = "%s keeps toys in 3 boxes. The first one has %d toys.  The second has %d times as many as the first. If %s has %d toys in total, how many toys are in the third box?" % (n, n1, mult, hos, total)
+    a = []
+    a.append(n3)
+    a.append(n1 + n2)
+    a.append(total)
+    a.append(n2)
+    print_answers(f, qs, a)
+
+
+def basic_shapes():
+    a = []
+    for i in range(4):
+        bs = BasicShape(2, i)
+        ss = io.StringIO()
+        bs.draw(ss)
+        a.append(ss.getvalue())
+        ss.close()
+
+    stype = np.random.randint(4)
+    bs = BasicShape(2, stype)
+    qs = "Which figure is an example of %s?" % bs.name()
     print_answers(f, qs, a)

@@ -23,7 +23,9 @@ gef.set_file_handle(f)
 gfuncs = [gef.mult_or_div,
           gef.frac_multiply,
           gef.multiple_less_than,
-          gef.true_comparison
+          gef.true_comparison,
+          gef.multi_part_diff,
+          gef.basic_shapes
 ]
 
 gef.start()
