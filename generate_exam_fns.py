@@ -215,6 +215,27 @@ class BasicShape:
             f.write("\\fill (0,0) circle(1pt);\n")
         f.write("\\end{tikzpicture}\n")
 
+        
+#--------------------
+class FractionallyShadedBox:
+    
+    def __init__(self, tlen, theight, num, denom):
+        self.tlen = tlen
+        self.theight = theight
+        self.num = num
+        self.denom = denom
+        self.dx = tlen/denom
+        
+    def draw(self, f):
+        f.write("\\begin{tikzpicture}\n")
+        # write shaded boxes
+        for i in range(self.denom):
+            shaded = '[fill = gray]' if i < self.num else ''
+            
+            f.write("\\draw%s (%f,0) rectangle ++(%f,%f);\n" % (shaded, self.dx*i, self.dx, self.theight))
+        
+        f.write("\\end{tikzpicture}\n")
+
 #--------------------
 class SpinnerPic:
     def __init__(self, divs, radius = 2.0):
@@ -989,4 +1010,38 @@ def basic_shapes():
     stype = np.random.randint(4)
     bs = BasicShape(2, stype)
     qs = "Which figure is an example of %s?" % bs.name()
+    print_answers(f, qs, a)
+
+#--------------------
+def frac_box():
+    num = np.random.randint(1,3)
+    denom = np.random.randint(num+2, 7)
+    mult = np.random.randint(2,4)
+    
+    qs = "Which fraction model has the shaded area equivalent to $\\frac{%d}{%d}$?" % (num*mult, denom*mult)
+    tlen = 6
+    theight = 2
+
+    a = []
+    ss = io.StringIO()
+    corr = FractionallyShadedBox(tlen, theight, num, denom)
+    corr.draw(ss)
+    a.append(ss.getvalue())
+    ss.close()
+
+    #pick incorrect answers
+    nums = np.arange(1, denom+1)
+    nums = np.delete(nums, num-1)
+    for n in np.random.choice(nums, 2, replace=False):
+        ss = io.StringIO()
+        b = FractionallyShadedBox(tlen, theight, n, denom)
+        b.draw(ss)
+        a.append(ss.getvalue())
+        ss.close()
+    # add wrong denom
+    ss = io.StringIO()
+    b = FractionallyShadedBox(tlen, theight, num, denom*mult)
+    b.draw(ss)
+    a.append(ss.getvalue())
+    ss.close()
     print_answers(f, qs, a)

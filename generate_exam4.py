@@ -25,7 +25,9 @@ gfuncs = [gef.mult_or_div,
           gef.multiple_less_than,
           gef.true_comparison,
           gef.multi_part_diff,
-          gef.basic_shapes
+          gef.basic_shapes,
+          gef.frac_box,
+          gef.rnd_roundq # from 3rd
 ]
 
 gef.start()
