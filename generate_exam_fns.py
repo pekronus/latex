@@ -215,6 +215,24 @@ class BasicShape:
             f.write("\\fill (0,0) circle(1pt);\n")
         f.write("\\end{tikzpicture}\n")
 
+class Angles:
+    def __init__(self, angles, tlen):
+        self.angles = np.asarray(angles)*2*np.pi/360.0
+        self.tlen = tlen
+
+    def draw(self, f, off = 0.2):
+        f.write("\\begin{tikzpicture}\n")
+        f.write("\\draw (%5.2f,%5.2f) node[align=center]{A};\n" % (-off, -off) );
+        name = 'B'
+        for a in self.angles:
+            x = self.tlen*np.cos(a)
+            y = self.tlen*np.sin(a)
+            f.write("\\draw [thick, ->] (0,0) -- (%5.2f, %5.2f);\n" % (x,y))
+            f.write("\\draw (%5.2f, %5.2f) node[align=center]{%s};\n" % (x+off,y+off, name))
+            name = chr(ord(name)+1)
+            
+        f.write("\\end{tikzpicture}\n") 
+    
         
 #--------------------
 class FractionallyShadedBox:
@@ -1045,3 +1063,23 @@ def frac_box():
     a.append(ss.getvalue())
     ss.close()
     print_answers(f, qs, a)
+
+#--------------------
+def angle_math():
+    a1 = np.random.randint(100,151)
+    a2 = np.random.randint(10, a1 - 10);
+    
+    a = []
+    a.append(a1 - a2) # correct
+    a.append(a1 + a2)
+    a.append(180 - a1)
+    a.append(90+a2)
+    
+    f.write("\\begin{question}\n")
+    f.write("$\\angle$BAD = %d degrees. $\\angle$CAD = %d degrees.\n\n" % (a1, a2))
+    A = Angles([a1,a2,0], 3)
+    A.draw(f)
+    f.write("\n\nWhat is the $\\angle$BAC equal to ?")
+
+    print_choices(a, True)
+    f.write("\\end{question}\n\n")
