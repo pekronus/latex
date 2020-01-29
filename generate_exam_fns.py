@@ -927,7 +927,7 @@ def mult_or_div():
         n1 = np.random.randint(121, 1000)
         n2 = np.random.randint(3, 10) 
     else:
-        n1 = np.random.randint(12, 100)
+        n1 = np.random.randint(12, 1000)
         n2 = np.random.randint(12, 100)
 
     qs += "$%d %s %d = ?$. Show your work" % (n1, ('\\div' if div else '\\times'), n2)
@@ -1083,3 +1083,29 @@ def angle_math():
 
     print_choices(a, True)
     f.write("\\end{question}\n\n")
+
+
+def closest_answer():
+    obj = np.random.choice(["pencils", "folders", "pens"])
+    colors = np.random.choice(["red", "blue", "green"], 2, replace=False)
+    nbs = np.random.choice(np.arange(3, 8), 2)
+    nos = np.random.choice(np.arange(15, 36), 2, replace=False)
+    name = get_names(1)[0]
+    pronoun = he_or_she(name).capitalize()
+    qs = "%s bought %d boxes of %s %s with %d %s %s in each box. \n\\newline %s also bought %d boxes of %s %s with %d %s %s in each box." % (name, nbs[0], colors[0], obj, nos[0], colors[0], obj, pronoun, nbs[1], colors[1], obj, nos[1], colors[1], obj)
+    qs += "\n\\newline Which number is \\textbf{closest} to the total number of %s and %s %s that %s bought?" % (colors[0], colors[1], obj, name)
+
+    ecorr = np.dot(nbs, nos)
+    lb = 5
+    ub = 21
+    a = []
+    for _ in range(4):
+        n = np.random.randint(lb, ub)
+        sign = np.random.choice([-1, +1])
+        a.append(ecorr + n*sign)
+        lb = n+ 1
+        ub = n + 6
+
+    print_answers(f, qs, a)
+
+    

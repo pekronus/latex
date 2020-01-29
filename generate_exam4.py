@@ -28,7 +28,8 @@ gfuncs = [gef.mult_or_div,
           gef.basic_shapes,
           gef.frac_box,
           gef.rnd_roundq, 
-          gef.angle_math
+          gef.angle_math,
+          gef.closest_answer
 ]
 
 gef.start()
