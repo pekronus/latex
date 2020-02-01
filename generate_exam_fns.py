@@ -1108,4 +1108,24 @@ def closest_answer():
 
     print_answers(f, qs, a)
 
-    
+
+def perimeter_rect():
+    name = get_names(1)[0]
+    inverse = np.random.choice([False, True])
+    l = np.random.randint(30, 81)
+    w = np.random.randint(20, l)
+    p = 2*l + 2*w
+    if inverse:
+        qs = "%s bought %d feet of fencing which is enough to put around %s rectangular yard. The length of the yard is %d. What is the the width?" % (name, p, his_or_her(name), l)
+        a = [w]
+        a.append(l)
+        a.append(w-5)
+        a.append(l-3 if l-3 != w else l-4)
+    else:
+        qs = "%s needs to buy enough fencing to put around %s rectangular yard. The length of the yard is %d and the width is %d. How many feet of fencing is needed?" % (name, his_or_her(name), l, w)
+        a = [p]
+        a.append(l*w)
+        a.append(l+w)
+        a.append(2*l)
+
+    print_answers(f, qs, a)

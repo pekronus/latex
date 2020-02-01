@@ -29,7 +29,8 @@ gfuncs = [gef.mult_or_div,
           gef.frac_box,
           gef.rnd_roundq, 
           gef.angle_math,
-          gef.closest_answer
+          gef.closest_answer,
+          gef.perimeter_rect
 ]
 
 gef.start()
