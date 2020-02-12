@@ -3,6 +3,15 @@ import sys
 import numpy as np
 import io
 
+def preprocess_funcs(fdict):
+    flist = []
+    for f, mult in fdict.items():
+        for _ in np.arange(mult):
+            flist.append(f)
+    return flist
+    
+
+    
 ## Main---------------------------
 if len(sys.argv) <= 1:
     print("Need a file name");
@@ -20,18 +29,22 @@ np.random.seed(seed)
 f = open(sys.argv[1], "w")
 gef.set_file_handle(f)
 
-gfuncs = [gef.mult_or_div,
-          gef.frac_multiply,
-          gef.multiple_less_than,
-          gef.true_comparison,
-          gef.multi_part_diff,
-          gef.basic_shapes,
-          gef.frac_box,
-          gef.rnd_roundq, 
-          gef.angle_math,
-          gef.closest_answer,
-          gef.perimeter_rect
-]
+gfuncs_dict = {gef.mult_or_div : 2,
+               gef.frac_multiply : 2,
+               gef.multiple_less_than : 1,
+               gef.true_comparison : 2,
+               gef.multi_part_diff : 1,
+               gef.basic_shapes : 1,
+               gef.frac_box : 1,
+               gef.rnd_roundq : 1, 
+               gef.angle_math : 2,
+               gef.closest_answer : 2,
+               gef.perimeter_rect : 2,
+               gef.angle_math_circle : 1,
+               gef.compass : 1
+}
+
+gfuncs = preprocess_funcs(gfuncs_dict)
 
 gef.start()
 

@@ -216,23 +216,37 @@ class BasicShape:
         f.write("\\end{tikzpicture}\n")
 
 class Angles:
-    def __init__(self, angles, tlen):
+    def __init__(self, angles, tlen, labels=[]):
         self.angles = np.asarray(angles)*2*np.pi/360.0
         self.tlen = tlen
-
+        if (len(labels) == len(angles)+1):
+            self.labels = labels
+        else:
+            s = 'A'
+            self.labels = [s]
+            for _ in np.arange(len(angles)):
+                self.labels.append(chr(ord(self.labels[-1])+1))
+            
+                              
     def draw(self, f, off = 0.2):
+        liter = iter(self.labels)
         f.write("\\begin{tikzpicture}\n")
-        f.write("\\draw (%5.2f,%5.2f) node[align=center]{A};\n" % (-off, -off) );
-        name = 'B'
+        f.write("\\draw (%5.2f,%5.2f) node[align=center]{%s};\n" % (-off, -off, next(liter)));
+        
         for a in self.angles:
+            name = next(liter)
             x = self.tlen*np.cos(a)
             y = self.tlen*np.sin(a)
             f.write("\\draw [thick, ->] (0,0) -- (%5.2f, %5.2f);\n" % (x,y))
             f.write("\\draw (%5.2f, %5.2f) node[align=center]{%s};\n" % (x+off,y+off, name))
-            name = chr(ord(name)+1)
+        
             
-        f.write("\\end{tikzpicture}\n") 
-    
+        f.write("\\end{tikzpicture}\n")
+        
+#--------------------
+def draw_compass(f, len = 2):
+    a = Angles([90, 0, -90, 180], len, ['', 'N', 'E', 'S', 'W'])
+    a.draw(f)
         
 #--------------------
 class FractionallyShadedBox:
@@ -1129,3 +1143,30 @@ def perimeter_rect():
         a.append(2*l)
 
     print_answers(f, qs, a)
+
+
+#--------------------
+def angle_math_circle():
+    denoms = np.random.choice([360, 180, 120, 60, 30], size=4, replace=False)
+    qs = "What is the measure, in degrees, of an angle that is equivalent to $\\frac{1}{%d}$ of a circle?" % denoms[0]
+    
+    a = [int(360/d) for d in denoms]
+    
+    print_answers(f, qs, a)
+
+#--------------------
+def compass():
+
+    lor = np.random.choice(['left', 'right'])
+    
+    nturns = np.random.choice([1,2,3,4])
+    
+    qs = "If you start out facing North and then make %d %s turns, which way will you be facing?" % (nturns, lor)
+    f.write("\\begin{question}\n")
+    f.write("\n\n %s \n \n" % qs)
+    
+    draw_compass(f)
+    a = ['North', 'West', 'South', 'East']
+    print_choices(a, True)
+    f.write("\\end{question}\n\n")
+
